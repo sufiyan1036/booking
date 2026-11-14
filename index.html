@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Appointment Booking System</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#f5f7fa;color:#333;line-height:1.6}
+        .navbar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);position:sticky;top:0;z-index:1000}
+        .nav-container{max-width:1200px;margin:0 auto;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:1.5rem;font-weight:700;color:#3B82F6}
+        .nav-links{display:flex;gap:2rem;align-items:center}
+        .nav-link{text-decoration:none;color:#555;font-weight:500;transition:color .3s}
+        .nav-link:hover{color:#3B82F6}
+        .btn-primary{background:#3B82F6;color:#fff;border:none;padding:.75rem 1.5rem;border-radius:8px;cursor:pointer;font-size:1rem;font-weight:500;transition:background .3s}
+        .btn-primary:hover{background:#2563EB}
+        .btn-large{padding:1rem 2.5rem;font-size:1.2rem}
+        .btn-block{width:100%}
+        .btn-icon{background:#f0f0f0;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:1.2rem}
+        .btn-secondary{background:#10B981;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;margin:0 .25rem}
+        .btn-danger{background:#EF4444;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;margin:0 .25rem}
+        .section{display:none;min-height:calc(100vh - 80px)}
+        .section.active{display:block}
+        .container{max-width:1200px;margin:0 auto;padding:2rem}
+        .hero{text-align:center;padding:5rem 2rem}
+        .hero h1{font-size:3rem;color:#1a1a1a;margin-bottom:1rem}
+        .hero-subtitle{font-size:1.25rem;color:#666;margin-bottom:2rem}
+        .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1200px;margin:0 auto;padding:2rem}
+        .feature-card{background:#fff;padding:2rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.1);text-align:center}
+        .feature-icon{font-size:3rem;margin-bottom:1rem}
+        .feature-card h3{margin-bottom:.5rem;color:#1a1a1a}
+        .auth-container{display:flex;justify-content:center;align-items:center;min-height:80vh;padding:2rem}
+        .auth-box{background:#fff;padding:3rem;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);width:100%;max-width:450px}
+        .auth-box h2{text-align:center;margin-bottom:2rem;color:#1a1a1a}
+        .form-group{margin-bottom:1.5rem}
+        .form-group label{display:block;margin-bottom:.5rem;font-weight:500;color:#555}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:1rem;transition:border-color .3s}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#3B82F6}
+        .auth-link{text-align:center;margin-top:1rem;color:#666}
+        .auth-link a{color:#3B82F6;text-decoration:none}
+        .tip{text-align:center;font-size:.85rem;color:#999;margin-top:1rem}
+        .progress-steps{display:flex;justify-content:center;align-items:center;margin:2rem 0;padding:0 1rem}
+        .step{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+        .step-circle{width:50px;height:50px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-weight:700;color:#999}
+        .step.active .step-circle{background:#3B82F6;color:#fff}
+        .step span{font-size:.9rem;color:#666}
+        .step-line{width:80px;height:3px;background:#e0e0e0;margin:0 1rem}
+        .booking-content{background:#fff;padding:2rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+        .booking-step{display:none}
+        .booking-step.active{display:block}
+        .booking-step h2{margin-bottom:2rem}
+        .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem}
+        .service-card{padding:1.5rem;border:3px solid #e0e0e0;border-radius:12px;cursor:pointer;transition:all .3s}
+        .service-card:hover{border-color:#3B82F6;transform:translateY(-2px)}
+        .service-card.selected{border-color:#3B82F6;background:#EFF6FF}
+        .service-card h3{margin-bottom:.5rem}
+        .service-card .duration{color:#666;font-size:.9rem}
+        .service-card .price{color:#3B82F6;font-size:1.5rem;font-weight:700;margin-top:.5rem}
+        .calendar-container{max-width:600px;margin:0 auto}
+        .calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+        .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:.5rem}
+        .calendar-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:2px solid #e0e0e0;border-radius:8px;cursor:pointer;font-weight:500;transition:all .3s}
+        .calendar-day:hover:not(.disabled):not(.header){border-color:#3B82F6;background:#EFF6FF}
+        .calendar-day.selected{background:#3B82F6;color:#fff;border-color:#3B82F6}
+        .calendar-day.disabled{color:#ccc;cursor:not-allowed}
+        .calendar-day.header{font-weight:700;border:none;cursor:default;color:#666}
+        #timeSlotsContainer{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:1rem}
+        .time-slot{padding:1rem;border:2px solid #e0e0e0;border-radius:8px;text-align:center;cursor:pointer;font-weight:500;transition:all .3s}
+        .time-slot:hover:not(.booked){border-color:#3B82F6;background:#EFF6FF}
+        .time-slot.selected{background:#3B82F6;color:#fff;border-color:#3B82F6}
+        .time-slot.booked{background:#fee;color:#999;cursor:not-allowed}
+        .booking-summary{background:#f9f9f9;padding:1.5rem;border-radius:8px;margin-bottom:2rem}
+        .booking-summary p{margin:.5rem 0;font-size:1.1rem}
+        .booking-summary strong{color:#1a1a1a}
+        .filter-tabs,.admin-tabs{display:flex;gap:1rem;margin-bottom:2rem}
+        .tab{padding:.75rem 1.5rem;border:none;background:#f0f0f0;border-radius:8px;cursor:pointer;font-weight:500;transition:all .3s}
+        .tab:hover{background:#e0e0e0}
+        .tab.active{background:#3B82F6;color:#fff}
+        .appointment-card{background:#fff;padding:1.5rem;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:1rem}
+        .appointment-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+        .appointment-header h3{margin-bottom:.5rem}
+        .status-badge{padding:.25rem .75rem;border-radius:20px;font-size:.85rem;font-weight:600}
+        .status-confirmed{background:#D1FAE5;color:#065F46}
+        .status-cancelled{background:#FEE2E2;color:#991B1B}
+        .status-completed{background:#DBEAFE;color:#1E40AF}
+        .appointment-details{color:#666;margin-bottom:1rem}
+        .appointment-details p{margin:.25rem 0}
+        .appointment-actions{display:flex;gap:.5rem}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem}
+        .stat-card{background:#fff;padding:1.5rem;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.1);text-align:center}
+        .stat-card h3{font-size:2rem;color:#3B82F6;margin-bottom:.5rem}
+        .stat-card p{color:#666}
+        .admin-content{display:none}
+        .admin-content.active{display:block}
+        .filter-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+        .filter-bar input,.filter-bar select{padding:.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:1rem}
+        .toast{position:fixed;bottom:2rem;right:2rem;background:#1a1a1a;color:#fff;padding:1rem 1.5rem;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.3);transform:translateY(200%);transition:transform .3s;z-index:2000}
+        .toast.show{transform:translateY(0)}
+        .toast.success{background:#10B981}
+        .toast.error{background:#EF4444}
+        @media(max-width:768px){
+            .nav-links{gap:1rem}
+            .hero h1{font-size:2rem}
+            .features{grid-template-columns:1fr}
+            .progress-steps{flex-wrap:wrap}
+            .step-line{width:40px}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">BookIt Pro</div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link" onclick="showSection('home')">Home</a>
+                <a href="#book" class="nav-link" onclick="showSection('booking')">Book Appointment</a>
+                <a href="#appointments" class="nav-link" onclick="showSection('myAppointments')">My Appointments</a>
+                <a href="#admin" class="nav-link admin-only" onclick="showSection('admin')" style="display:none;">Admin</a>
+                <button id="authBtn" class="btn-primary" onclick="showSection('login')">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="section active">
+        <div class="hero">
+            <h1>Professional Appointment Booking System</h1>
+            <p class="hero-subtitle">Schedule your appointments easily and efficiently with our modern booking platform</p>
+            <button class="btn-large btn-primary" onclick="showSection('booking')">Book Now</button>
+        </div>
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Easy Scheduling</h3>
+                <p>Pick your preferred date and time with our intuitive calendar</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Instant Confirmation</h3>
+                <p>Receive immediate booking confirmations</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Flexible Management</h3>
+                <p>Reschedule or cancel appointments easily</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="login" class="section">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2>Login</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary btn-block">Sign In</button>
+                </form>
+                <p class="auth-link">Don't have an account? <a href="#" onclick="showSection('register')">Register</a></p>
+                <p class="tip">Tip: Use admin@test.com / admin123 for admin access</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="register" class="section">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2>Create Account</h2>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="regName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="regPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary btn-block">Register</button>
+                </form>
+                <p class="auth-link">Already have an account? <a href="#" onclick="showSection('login')">Login</a></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="section">
+        <div class="container">
+            <h1>Book an Appointment</h1>
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div><span>Service</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div><span>Date</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div><span>Time</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">4</div><span>Confirm</span>
+                </div>
+            </div>
+            <div class="booking-content">
+                <div id="step1" class="booking-step active">
+                    <h2>Select Service</h2>
+                    <div class="services-grid" id="servicesGrid"></div>
+                </div>
+                <div id="step2" class="booking-step">
+                    <h2>Select Date</h2>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button onclick="previousMonth()" class="btn-icon">←</button>
+                            <h3 id="currentMonth"></h3>
+                            <button onclick="nextMonth()" class="btn-icon">→</button>
+                        </div>
+                        <div class="calendar" id="calendar"></div>
+                    </div>
+                </div>
+                <div id="step3" class="booking-step">
+                    <h2>Select Time Slot</h2>
+                    <div id="timeSlotsContainer"></div>
+                </div>
+                <div id="step4" class="booking-step">
+                    <h2>Confirm Booking</h2>
+                    <div class="booking-summary" id="bookingSummary"></div>
+                    <div class="form-group">
+                        <label>Additional Notes (Optional)</label>
+                        <textarea id="bookingNotes" rows="4" placeholder="Any special requirements..."></textarea>
+                    </div>
+                    <button class="btn-primary btn-block" onclick="confirmBooking()">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="myAppointments" class="section">
+        <div class="container">
+            <h1>My Appointments</h1>
+            <div class="filter-tabs">
+                <button class="tab active" onclick="filterAppointments('upcoming', event)">Upcoming</button>
+                <button class="tab" onclick="filterAppointments('cancelled', event)">Cancelled</button>
+                <button class="tab" onclick="filterAppointments('completed', event)">Completed</button>
+                <button class="tab" onclick="filterAppointments('all', event)">All</button>
+            </div>
+            <div id="appointmentsList"></div>
+        </div>
+    </section>
+
+    <section id="admin" class="section">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalBookings">0</h3><p>Total Bookings</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="confirmedBookings">0</h3><p>Confirmed</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="cancelledBookings">0</h3><p>Cancelled</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalRevenue">$0</h3><p>Revenue</p>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab active" onclick="showAdminTab('bookings', event)">All Bookings</button>
+                <button class="tab" onclick="showAdminTab('settings', event)">Settings</button>
+            </div>
+
+            <div id="adminBookings" class="admin-content active">
+                <div class="filter-bar">
+                    <input type="date" id="filterDate" onchange="loadAdminBookings()">
+                    <select id="filterService" onchange="loadAdminBookings()">
+                        <option value="">All Services</option>
+                    </select>
+                    <select id="filterStatus" onchange="loadAdminBookings()">
+                        <option value="">All Status</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div id="adminBookingsList"></div>
+            </div>
+
+            <div id="adminSettings" class="admin-content">
+                <h2>Working Hours Settings</h2>
+                <form id="settingsForm" onsubmit="saveSettings(event)">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="startTime" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="endTime" value="18:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Slot Duration (minutes)</label>
+                        <input type="number" id="slotDuration" value="30" min="15" step="15">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Bookings per Slot</label>
+                        <input type="number" id="maxBookings" value="1" min="1">
+                    </div>
+                    <button type="submit" class="btn-primary">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let currentUser = null;
+        let bookingData = { serviceId:null, date:null, timeSlot:null, notes:'' };
+        let currentStep = 1;
+        let currentMonth = new Date();
+        let currentFilter = 'upcoming';
+
+        const SERVICES = [
+            { id:1,name:'General Consultation',duration:30,price:50 },
+            { id:2,name:'Specialist Consultation',duration:45,price:100 },
+            { id:3,name:'Follow-up Visit',duration:20,price:30 },
+            { id:4,name:'Health Checkup',duration:60,price:150 }
+        ];
+
+        const TIME_SLOTS = [
+            '09:00','09:30','10:00','10:30','11:00','11:30',
+            '12:00','12:30','14:00','14:30','15:00','15:30',
+            '16:00','16:30','17:00','17:30'
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeData();
+            loadUser();
+            renderServices();
+            updateUI();
+        });
+
+        function initializeData(){
+            if(!localStorage.getItem('users')){
+                const defaultUsers=[{id:1,name:'Admin',email:'admin@test.com',password:'admin123',role:'admin',phone:'1234567890'}];
+                localStorage.setItem('users',JSON.stringify(defaultUsers));
+            }
+            if(!localStorage.getItem('bookings')){
+                localStorage.setItem('bookings',JS
